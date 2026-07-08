@@ -947,6 +947,16 @@
       color: var(--graphite);
       padding: 10px 0;
     }
+    .tool-cta {
+      align-items: center;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      margin-top: 20px;
+    }
+    .tool-cta .copy {
+      max-width: 46ch;
+    }
     .principle-banner {
       align-items: center;
       background: var(--ink);
@@ -1133,11 +1143,13 @@
       .hero-subtitle {
         font-size: 25px;
       }
-      .hero-actions {
+      .hero-actions,
+      .tool-cta {
         align-items: stretch;
         flex-direction: column;
       }
-      .hero-actions .button {
+      .hero-actions .button,
+      .tool-cta .button {
         font-size: 11px;
         justify-content: center;
         max-width: 100%;
@@ -1311,6 +1323,7 @@
           <a href="#timeline">8 weeks</a>
           <a href="#portfolio">Portfolio</a>
           <a href="#tools">Tools</a>
+          <a href="brief-generator.html">Brief tool</a>
           <a href="#review">Review</a>
         </nav>
         <div class="language-toggle" aria-label="Language selector">
@@ -1744,6 +1757,10 @@
             </ul>
           </article>
         </div>
+        <p class="tool-cta">
+          <a class="button primary" href="brief-generator.html">Try the Brief Generator <span class="arrow">&rarr;</span></a>
+          <span class="copy">Randomised client briefs for practice &mdash; shuffle industries, lock what you like, print or copy the rest.</span>
+        </p>
         <div class="principle-banner">
           <h3>Taste first.</h3>
           <p>Tools are not the course. Taste, judgement, process and craft are the course.</p>
@@ -1832,6 +1849,7 @@
       "8 weeks": "8 settimane",
       "Portfolio": "Portfolio",
       "Tools": "Strumenti",
+      "Brief tool": "Strumento brief",
       "Review": "Revisione",
       "For Vicky Pancaldi \u00b7 Design Residency": "Per Vicky Pancaldi \u00b7 Design Residency",
       "8 weeks of applied graphic design, brand thinking, digital craft and AI-assisted creative practice.": "8 settimane di graphic design applicato, pensiero di brand, craft digitale e pratica creativa assistita dall'AI.",
@@ -2076,6 +2094,8 @@
       "Storytelling, evidence, presentation.": "Storytelling, evidenza, presentazione.",
       "Tools are taught only when they are needed.": "Gli strumenti si imparano solo quando servono.",
       "The tool enters after the design problem is clear. Software supports taste, judgement, process and craft; it does not replace them.": "Lo strumento entra dopo che il problema di design \u00e8 chiaro. Il software supporta gusto, giudizio, processo e craft; non li sostituisce.",
+      "Try the Brief Generator": "Prova il Brief Generator",
+      "Randomised client briefs for practice \u2014 shuffle industries, lock what you like, print or copy the rest.": "Brief cliente casuali per esercitarsi \u2014 mischia i settori, blocca ci\u00f2 che ti piace, stampa o copia il resto.",
       "Core design": "Design core",
       "Presentation": "Presentazione",
       "Keynote / Google Slides": "Keynote / Google Slides",
