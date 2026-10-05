@@ -1,0 +1,1475 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pancaldi Academy · Virtual client studio</title>
+  <meta name="description" content="A bilingual local conversation with Maya Bennett, the fictional founder in the Pancaldi Academy coffee brand course.">
+  <script>if (location.protocol === "file:") document.documentElement.dataset.localFile = "true";</script>
+  <style>
+    html[data-local-file] body > header,
+    html[data-local-file] body > main { display: none; }
+    #localLaunch { display: none; }
+    html[data-local-file] #localLaunch { display: block; }
+    .launch-card { max-width: 720px; margin: 10vh auto; padding: 36px; background: #FFFCF4; border: 1px solid #111; line-height: 1.6; }
+    .launch-card h1 { font-size: 32px; line-height: 1.15; }
+    .launch-card a { text-decoration: underline; }
+    .launch-card code { overflow-wrap: anywhere; }
+    :root {
+      --paper: #F5F1E8;
+      --ink: #111111;
+      --grey: #D8D2C8;
+      --graphite: #4A4A45;
+      --accent: #E24B2C;
+      --blue: #2D4C73;
+      --yellow: #E8D85C;
+      --surface: #FFFCF4;
+      --white: #FFFFFF;
+      --line: rgba(17, 17, 17, 0.16);
+      --shadow: 0 18px 55px rgba(17, 17, 17, 0.11);
+      --font-display: "Instrument Serif", "Iowan Old Style", "Charter", Georgia, serif;
+      --font-body: Inter, "Helvetica Neue", Arial, sans-serif;
+      --font-mono: "IBM Plex Mono", "Space Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+      --container: 1180px;
+      --gutter: clamp(18px, 4vw, 42px);
+    }
+    * { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      margin: 0;
+      background:
+        linear-gradient(90deg, rgba(17, 17, 17, 0.035) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(17, 17, 17, 0.025) 1px, transparent 1px),
+        var(--paper);
+      background-size: 72px 72px, 72px 72px, auto;
+      color: var(--ink);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+    button, textarea { font: inherit; }
+    button { cursor: pointer; }
+    .container { width: min(var(--container), calc(100% - (var(--gutter) * 2))); margin-inline: auto; }
+    .topbar {
+      backdrop-filter: blur(18px);
+      background: rgba(245, 241, 232, 0.88);
+      border-bottom: 1px solid var(--line);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .nav { align-items: center; display: flex; gap: 22px; justify-content: space-between; min-height: 66px; }
+    .brand-logo { display: block; height: 42px; object-fit: contain; width: 170px; }
+    .nav-actions, .language-toggle { align-items: center; display: flex; gap: 8px; }
+    .back, .language-toggle button, .reset, .send, .upload-label, .status {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .back { color: var(--graphite); }
+    .back:hover { color: var(--accent); }
+    .language-toggle { background: var(--surface); border: 1px solid var(--ink); border-radius: 999px; padding: 3px; }
+    .language-toggle button { background: transparent; border: 0; border-radius: 999px; min-height: 30px; padding: 7px 10px; }
+    .language-toggle button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+    main { padding-block: clamp(18px, 2.5vw, 36px); }
+    .kicker { color: var(--accent); font: 800 12px/1.3 var(--font-mono); letter-spacing: .12em; margin: 0 0 14px; text-transform: uppercase; }
+    .client-banner { align-items: center; background: var(--ink); box-shadow: var(--shadow); color: var(--paper); display: flex; flex-wrap: wrap; gap: 26px; margin-bottom: 20px; padding: clamp(20px, 3vw, 30px) clamp(24px, 4vw, 40px); }
+    .client-banner-portrait img { border-radius: 999px; display: block; height: clamp(84px, 9vw, 112px); object-fit: cover; width: clamp(84px, 9vw, 112px); }
+    .client-banner-info { flex: 1; min-width: 220px; }
+    .client-banner-info h2 { font: 500 clamp(38px, 5vw, 54px)/1.02 var(--font-display); margin: 0 0 8px; }
+    .client-banner-info p { color: var(--grey); font-size: 15px; line-height: 1.5; margin: 0; max-width: 58ch; }
+    .client-banner-facts { display: flex; flex-wrap: wrap; gap: 10px 20px; list-style: none; margin: 0; padding: 0; }
+    .client-banner-facts li { color: rgba(245, 241, 232, .7); font: 700 11px var(--font-mono); letter-spacing: .04em; text-transform: uppercase; white-space: nowrap; }
+    .client-banner-facts li:not(:first-child) { border-left: 1px solid rgba(255, 255, 255, .25); padding-left: 20px; }
+    .studio { background: var(--surface); border: 1px solid var(--ink); box-shadow: var(--shadow); display: grid; grid-template-columns: 280px minmax(0, 1fr); min-height: 650px; }
+    .conversation-nav { background: var(--surface); border-right: 1px solid var(--line); display: flex; flex-direction: column; overflow: hidden; padding: 24px; }
+    .conversations-head { align-items: center; display: flex; flex-shrink: 0; justify-content: space-between; margin-bottom: 12px; }
+    .conversations-head .tiny-label { color: var(--graphite); font: 700 11px/1.3 var(--font-mono); letter-spacing: .06em; text-transform: uppercase; }
+    .conversations-head-actions { align-items: center; display: flex; gap: 6px; }
+    #newConversation, #newFolder { align-items: center; background: transparent; border: 1px solid var(--line); border-radius: 999px; color: var(--graphite); display: inline-flex; gap: 3px; padding: 5px 8px; }
+    #newConversation { border-color: var(--ink); color: var(--ink); }
+    #newConversation:hover { background: var(--ink); color: var(--paper); }
+    #newFolder:hover { background: rgba(17, 17, 17, .06); border-color: var(--ink); color: var(--ink); }
+    #newConversation svg, #newFolder svg { display: block; }
+    .folder-icon { color: var(--graphite); display: inline-flex; flex-shrink: 0; }
+    .folder-group { margin-bottom: 2px; }
+    .folder-header-row { align-items: center; border-radius: 4px; cursor: grab; display: flex; gap: 6px; justify-content: space-between; margin: 2px 0; padding: 6px 4px; transition: background 120ms ease; }
+    .folder-header-row.drop-target { box-shadow: inset 3px 0 0 var(--accent); }
+    .folder-header-row.dragging { opacity: .4; }
+    .folder-name-wrap { align-items: center; display: flex; gap: 4px; min-width: 0; }
+    .folder-toggle { background: transparent; border: 0; color: rgba(17, 17, 17, .4); display: inline-flex; flex-shrink: 0; padding: 2px; transition: transform 150ms ease; }
+    .folder-toggle svg { display: block; }
+    .folder-group.expanded > .folder-header-row .folder-toggle { transform: rotate(90deg); }
+    .folder-group:not(.expanded) > .folder-children,
+    .folder-group:not(.expanded) > .folder-conversations { display: none; }
+    .folder-name { color: var(--ink); font: 800 11px var(--font-mono); letter-spacing: .06em; overflow: hidden; text-overflow: ellipsis; text-transform: uppercase; white-space: nowrap; }
+    .folder-rename-input { background: var(--paper); border: 1px solid var(--ink); border-radius: 3px; color: var(--ink); font: 800 11px var(--font-mono); letter-spacing: .04em; min-width: 0; padding: 2px 4px; width: 100%; }
+    .folder-actions { align-items: center; display: flex; flex-shrink: 0; gap: 2px; }
+    .folder-add-child, .folder-delete { background: transparent; border: 0; border-radius: 4px; flex-shrink: 0; line-height: 1; padding: 2px 6px; }
+    .folder-add-child { color: rgba(17, 17, 17, .4); font-size: 13px; }
+    .folder-add-child:hover { background: rgba(17, 17, 17, .06); color: var(--ink); }
+    .folder-delete { color: rgba(17, 17, 17, .35); font-size: 14px; }
+    .folder-delete:hover { background: rgba(226, 75, 44, .12); color: var(--accent); }
+    .folder-children { list-style: none; margin: 0; padding-left: 14px; }
+    .folder-conversations { display: flex; flex-direction: column; gap: 4px; list-style: none; margin: 0 0 8px; padding-left: 14px; }
+    .ungrouped-label { color: var(--graphite); font: 700 10px var(--font-mono); letter-spacing: .06em; margin: 10px 0 4px 2px; text-transform: uppercase; }
+    .conversations-list.drop-target { border-radius: 4px; outline: 2px dashed var(--accent); outline-offset: -2px; }
+    .conversation-item[draggable="true"] { cursor: grab; }
+    .conversation-item.dragging { opacity: .4; }
+    .conversations-search { background: var(--paper); border: 1px solid var(--line); color: var(--ink); flex-shrink: 0; font: 700 12px var(--font-mono); margin-bottom: 12px; padding: 8px 10px; width: 100%; }
+    .conversations-search::placeholder { color: var(--graphite); }
+    .conversation-item.match .conversation-open { box-shadow: inset 3px 0 0 var(--yellow); }
+    .conversation-snippet { color: var(--graphite); display: block; font-size: 11px; line-height: 1.4; margin-top: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    mark.search-mark { background: var(--yellow); border-radius: 2px; color: var(--ink); padding: 0 1px; }
+    .conversations-list { display: flex; flex: 1; flex-direction: column; gap: 4px; list-style: none; margin: 0; min-height: 0; overflow-y: auto; padding: 0; }
+    .conversations-empty { color: var(--graphite); font-size: 12px; line-height: 1.5; padding: 8px 2px; }
+    .conversation-item-row { align-items: stretch; display: flex; gap: 4px; }
+    .conversation-open { background: transparent; border: 0; border-radius: 4px; color: var(--graphite); flex: 1; min-width: 0; padding: 8px; text-align: left; }
+    .conversation-open:hover { background: rgba(17, 17, 17, .06); }
+    .conversation-item.active .conversation-open { background: rgba(17, 17, 17, .08); color: var(--ink); }
+    .conversation-title { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .conversation-date { color: var(--graphite); display: block; font: 700 10px var(--font-mono); letter-spacing: .04em; margin-top: 3px; opacity: .75; text-transform: uppercase; }
+    .conversation-rename { background: transparent; border: 0; border-radius: 4px; color: rgba(17, 17, 17, .35); flex-shrink: 0; padding: 0 6px; }
+    .conversation-rename:hover { background: rgba(17, 17, 17, .06); color: var(--ink); }
+    .conversation-rename svg { display: block; }
+    .conversation-rename-input { background: var(--paper); border: 1px solid var(--ink); border-radius: 3px; box-sizing: border-box; color: var(--ink); font: inherit; font-size: 13px; padding: 8px; width: 100%; }
+    .conversation-delete { background: transparent; border: 0; border-radius: 4px; color: rgba(17, 17, 17, .35); flex-shrink: 0; font-size: 15px; line-height: 1; padding: 0 8px; }
+    .conversation-delete:hover { background: rgba(226, 75, 44, .12); color: var(--accent); }
+    .chat { display: grid; grid-template-rows: auto minmax(320px, 1fr) auto; min-width: 0; position: relative; }
+    .chat-head { align-items: center; border-bottom: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: 14px; justify-content: space-between; padding: 16px 18px; }
+    .chat-head-actions { align-items: center; display: flex; flex-wrap: wrap; gap: 8px; }
+    .voice-select { background: var(--surface); border: 1px solid var(--ink); border-radius: 999px; color: var(--ink); font: 700 11px var(--font-mono); letter-spacing: .04em; padding: 9px 10px; text-transform: uppercase; }
+    .status { align-items: center; color: var(--graphite); display: inline-flex; gap: 8px; letter-spacing: .04em; text-transform: none; }
+    .status-dot { background: var(--accent); border-radius: 50%; height: 8px; width: 8px; }
+    .status.connected .status-dot { background: #278B54; }
+    .reset { background: transparent; border: 1px solid var(--ink); border-radius: 999px; padding: 9px 12px; }
+    .reset[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+    .messages { display: flex; flex-direction: column; gap: 14px; overflow-y: auto; padding: 22px; }
+    .message { max-width: min(82%, 680px); }
+    .message .label { color: var(--graphite); display: block; font: 800 10px/1 var(--font-mono); letter-spacing: .1em; margin-bottom: 6px; text-transform: uppercase; }
+    .bubble { border: 1px solid var(--ink); line-height: 1.5; padding: 14px 16px; white-space: pre-wrap; }
+    .message.assistant { align-self: flex-start; }
+    .message.assistant .bubble { background: var(--paper); }
+    .message.user { align-self: flex-end; }
+    .message.user .label { text-align: right; }
+    .message.user .bubble { background: var(--blue); color: var(--white); }
+    .message.error .bubble { background: #F8D8CF; border-color: var(--accent); }
+    .attachment-gallery { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+    .attachment-preview { border: 1px solid var(--ink); max-height: 180px; max-width: 240px; object-fit: cover; width: auto; }
+    .composer { border-top: 1px solid var(--ink); padding: 16px; }
+    .suggestions { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 12px; }
+    .suggestions button { background: transparent; border: 1px solid var(--line); border-radius: 999px; color: var(--graphite); font-size: 12px; padding: 8px 11px; }
+    .suggestions button:hover { background: var(--yellow); border-color: var(--ink); color: var(--ink); }
+    textarea { background: var(--white); border: 1px solid var(--ink); border-radius: 0; color: var(--ink); min-height: 92px; padding: 13px; resize: vertical; width: 100%; }
+    textarea:focus { outline: 3px solid var(--yellow); outline-offset: 2px; }
+    .composer-actions { align-items: center; display: flex; gap: 10px; justify-content: space-between; margin-top: 10px; }
+    .upload-label { align-items: center; border: 1px solid var(--ink); display: inline-flex; min-height: 42px; padding: 10px 13px; }
+    .upload-label:hover { background: var(--yellow); }
+    #micButton.recording { background: var(--accent); border-color: var(--accent); color: var(--white); }
+    #micButton.unavailable { opacity: 0.4; }
+    #imageInput { clip: rect(0 0 0 0); clip-path: inset(50%); height: 1px; overflow: hidden; position: absolute; white-space: nowrap; width: 1px; }
+    .send { background: var(--ink); border: 1px solid var(--ink); border-radius: 999px; color: var(--paper); min-height: 42px; padding: 10px 18px; }
+    .send:disabled, .upload-label.disabled { cursor: wait; opacity: .5; }
+    .file-note { color: var(--graphite); font-size: 12px; line-height: 1.4; margin: 8px 0 0; }
+    .selected-file { align-items: center; color: var(--accent); display: inline-flex; flex-wrap: wrap; font-weight: 700; gap: 6px; }
+    .attachment-chip { align-items: center; background: var(--yellow); border-radius: 999px; color: var(--ink); display: inline-flex; font-size: 11px; gap: 2px; padding: 3px 4px 3px 10px; }
+    .attachment-remove { background: transparent; border: 0; color: var(--ink); cursor: pointer; font-size: 13px; line-height: 1; padding: 3px 6px; }
+    .attachment-remove:hover { color: var(--accent); }
+    .chat { position: relative; }
+    .drop-hint {
+      align-items: center; background: rgba(232, 216, 92, 0.16); border: 2px dashed var(--accent);
+      color: var(--accent); display: none; font: 800 13px/1.3 var(--font-mono); inset: 10px;
+      justify-content: center; letter-spacing: .06em; pointer-events: none; position: absolute;
+      text-align: center; text-transform: uppercase; z-index: 5;
+    }
+    .chat.drag-over .drop-hint { display: flex; }
+    @media (max-width: 850px) {
+      .studio { grid-template-columns: 1fr; }
+      .conversation-nav { border-right: 0; border-bottom: 1px solid var(--line); gap: 24px; }
+      .studio { min-height: 780px; }
+      .nav { align-items: flex-start; flex-direction: column; padding-block: 12px; }
+      .nav-actions { justify-content: space-between; width: 100%; }
+      .client-banner { flex-direction: column; align-items: flex-start; }
+    }
+    @media (max-width: 520px) {
+      .message { max-width: 94%; }
+      .composer-actions { align-items: stretch; flex-direction: column; }
+      .send, .upload-label, #micButton { justify-content: center; width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <section id="localLaunch" class="launch-card" aria-label="Open the virtual client">
+    <p class="kicker">Pancaldi Academy · Virtual client</p>
+    <h1>Open the chat with its launcher</h1>
+    <p>In this same folder, double-click <strong>Start Virtual Client.command</strong>.</p>
+    <p>It starts the local server automatically and opens the working chat in your browser. Keep LM Studio running with Qwen loaded. You can close the launcher's Terminal window once the chat opens.</p>
+    <p>This HTML file cannot start a program on your Mac from inside the browser.</p>
+    <p><a href="http://127.0.0.1:4173/virtual-client/client-chat.html">Server already running? Open the chat →</a></p>
+    <hr>
+    <h2>Apri la chat con il launcher</h2>
+    <p>Nella stessa cartella, fai doppio clic su <strong>Start Virtual Client.command</strong>. Avvia automaticamente il server locale e apre la chat nel browser. Tieni LM Studio attivo con Qwen caricato. Quando la chat si apre puoi chiudere la finestra Terminale.</p>
+    <p>Il browser non può avviare un programma sul Mac da questo file HTML.</p>
+  </section>
+  <header class="topbar">
+    <div class="container nav">
+      <a href="../index.html" aria-label="Pancaldi Academy home"><img class="brand-logo" src="../assets/pancaldi-academy-logo.svg" width="183" height="36" alt="Pancaldi Academy"></a>
+      <div class="nav-actions">
+        <a class="back" href="../index.html" data-copy="back">← Course overview</a>
+        <div class="language-toggle" aria-label="Language selector">
+          <button type="button" data-language="it" aria-pressed="false">IT</button>
+          <button type="button" data-language="en" aria-pressed="true">EN</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <p class="kicker" data-copy="kicker">Virtual client · Local studio</p>
+
+    <section class="client-banner" aria-label="Fictional client profile">
+      <div class="client-banner-portrait"><img id="portraitImg" src="../assets/maya-bennett-portrait.jpg" alt="Maya Bennett behind the counter of the fictional café"></div>
+      <div class="client-banner-info">
+        <h2>Maya Bennett</h2>
+        <p data-copy="role">Fictional founder · specialty roaster, neighbourhood café, apparel and merchandise.</p>
+      </div>
+      <ul class="client-banner-facts">
+        <li data-copy="fact1">Islington, London</li>
+        <li data-copy="fact2">Opening September 2027</li>
+        <li data-copy="fact3">Small team · modest launch budget</li>
+        <li data-copy="fact4">No final brand name yet</li>
+      </ul>
+    </section>
+
+    <section class="studio" aria-label="Virtual client chat">
+      <aside class="conversation-nav">
+        <div class="conversations-head">
+          <span class="tiny-label" data-copy="conversationsLabel">Conversations</span>
+          <div class="conversations-head-actions">
+            <button type="button" id="newFolder" aria-label="New folder" title="New folder"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4.5l2 2H19a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"></path></svg><span>+</span></button>
+            <button type="button" id="newConversation" aria-label="New conversation" title="New conversation"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg><span>+</span></button>
+          </div>
+        </div>
+        <input type="search" id="conversationsSearch" class="conversations-search" data-placeholder-en="Search conversations…" data-placeholder-it="Cerca nelle conversazioni…" aria-label="Search conversations">
+        <ul class="conversations-list" id="conversationsList"></ul>
+      </aside>
+
+      <div class="chat">
+        <div class="drop-hint" data-copy="dropHint" aria-hidden="true">Drop images here</div>
+        <div class="chat-head">
+          <span class="status" id="status"><span class="status-dot"></span><span data-copy="checking">Checking local model…</span></span>
+          <div class="chat-head-actions">
+            <select id="voiceSelect" class="voice-select" aria-label="Voice"></select>
+            <button class="reset" id="voiceToggle" type="button" aria-pressed="false">🔈 Voice reply</button>
+            <button class="reset" id="startCourse" type="button" data-copy="startCourse">Start Course</button>
+            <button class="reset" id="reset" type="button" data-copy="reset">Reset chat</button>
+          </div>
+        </div>
+        <div class="messages" id="messages" aria-live="polite"></div>
+        <form class="composer" id="composer">
+          <div class="suggestions" id="suggestions"></div>
+          <label for="prompt" class="kicker" style="display:block" data-copy="promptLabel">Your question or proposal</label>
+          <textarea id="prompt" maxlength="5000" data-placeholder-en="Ask about the audience, present a direction, or request client feedback…" data-placeholder-it="Chiedi del pubblico, presenta una direzione o richiedi un feedback cliente…" required></textarea>
+          <div class="composer-actions">
+            <label class="upload-label" id="uploadLabel" for="imageInput" data-copy="upload">Attach sketch / idea</label>
+            <input id="imageInput" type="file" accept="image/png,image/jpeg,image/webp" multiple>
+            <button class="upload-label" id="micButton" type="button"></button>
+            <button class="send" id="send" type="submit" data-copy="send">Send to Maya →</button>
+          </div>
+          <p class="file-note"><span data-copy="fileHelp">PNG, JPG or WebP, maximum 4 MB. Images are sent locally with this message only and are not saved. Reattach for later visual feedback.</span> <span class="selected-file" id="selectedFile"></span></p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    if (location.protocol !== "file:") {
+    const copy = {
+      en: {
+        back: "← Course overview", kicker: "Virtual client · Local studio",
+        role: "Fictional founder · specialty roaster, neighbourhood café, apparel and merchandise.",
+        fact1: "Islington, London", fact2: "Opening September 2027", fact3: "Small team · modest launch budget", fact4: "No final brand name yet",
+        checking: "Checking local model…", connected: "Local Qwen ready", disconnected: "LM Studio is not connected", reset: "Reset chat", startCourse: "Start Course",
+        coursePrompt: "I am starting Week 1. Introduce yourself briefly, tell me your main business priority, and guide me to my first founder-interview task. Do not write the interview questions for me.",
+        visionFallback: "The model could not read the attachment. Describe its visual choices or try another image.",
+        saveError: "This conversation could not be saved. Keep this tab open and check the local server.",
+        promptLabel: "Your question or proposal", upload: "Attach sketch / idea", send: "Send to Maya →", sending: "Maya is typing…",
+        fileHelp: "PNG, JPG or WebP, up to 4 images, 4 MB each. Drag and drop onto this panel, or click to browse. Images are sent locally with this message only and are not saved. Reattach for later visual feedback.",
+        you: "You", maya: "Maya · fictional client", error: "Local connection",
+        welcome: "Hi, I’m Maya. I grew up in Queens, New York, but I’ve been living in London for a few years now, and I’m building an independent roaster and neighbourhood café here in Islington, with packaged coffee, apparel and useful merchandise. Ask me about the business or show me where your thinking is. I’ll respond as your client and point you to the next course step.",
+        unavailable: "Maya could not finish the reply. Check that LM Studio and its local server are running with a Qwen model loaded, then try again.",
+        tooLarge: "Choose an image smaller than 4 MB.", selected: "Attached:",
+        dropHint: "Drop images here", removeAttachment: "Remove",
+        skippedType: "Skipped (not an image):", skippedSize: "Skipped (larger than 4 MB):", skippedLimit: "Skipped (maximum 4 images per message):",
+        suggestions: ["What matters most to the audience?", "What should the brand never feel like?", "I want to present a creative territory."],
+        voice: "Voice reply", portraitAlt: "Maya Bennett behind the counter of the fictional café",
+        micIdle: "🎙️ Speak to Maya", micRecording: "⏺ Recording… tap to stop", micTranscribing: "Transcribing…",
+        micError: "Could not transcribe the recording.",
+        micOffline: "The speech server is not running.",
+        micUnavailable: "Voice input needs either this browser's speech recognition or the local whisper server, and neither is available right now. Type your question instead.",
+        micDenied: "Microphone access was blocked. Allow the microphone for this page in your browser settings, then try again.",
+        conversationsLabel: "Conversations", noConversations: "No saved conversations yet.",
+        toggleFolder: "Expand or collapse folder",
+        deleteConversation: "Delete conversation", confirmDelete: "Delete this conversation? This cannot be undone.",
+        renameConversation: "Rename conversation",
+        conversationLoadError: "Could not load that conversation.", untitled: "Untitled conversation",
+        newFolderPrompt: "Name this folder:", newSubfolderPrompt: "Name this subfolder:",
+        deleteFolder: "Delete folder", newSubfolder: "New subfolder", renameFolderHint: "Double-click to rename",
+        confirmDeleteFolder: "Delete this folder? Conversations and subfolders inside it are kept, just moved up a level.",
+        ungrouped: "Ungrouped"
+      },
+      it: {
+        back: "← Panoramica del corso", kicker: "Cliente virtuale · Studio locale",
+        role: "Founder fittizia · torrefazione specialty, caffetteria di quartiere, abbigliamento e merchandising.",
+        fact1: "Islington, Londra", fact2: "Apertura settembre 2027", fact3: "Piccolo team · budget di lancio contenuto", fact4: "Il brand non ha ancora un nome finale",
+        checking: "Verifica del modello locale…", connected: "Qwen locale pronto", disconnected: "LM Studio non è connesso", reset: "Azzera chat", startCourse: "Inizia il corso",
+        coursePrompt: "Sto iniziando la Settimana 1. Presentati brevemente, raccontami la tua priorità aziendale e guidami al primo compito di intervista alla founder. Non scrivere le domande al posto mio.",
+        visionFallback: "Il modello non ha potuto leggere l’allegato. Descrivi le scelte visive oppure prova un’altra immagine.",
+        saveError: "Impossibile salvare questa conversazione. Tieni aperta questa scheda e controlla il server locale.",
+        promptLabel: "La tua domanda o proposta", upload: "Allega sketch / idea", send: "Invia a Maya →", sending: "Maya sta scrivendo…",
+        fileHelp: "PNG, JPG o WebP, fino a 4 immagini, 4 MB ciascuna. Trascinale su questo pannello oppure clicca per sfogliare. Le immagini vengono inviate localmente solo con questo messaggio e non vengono salvate. Riallegale per feedback visivi successivi.",
+        you: "Tu", maya: "Maya · cliente fittizia", error: "Connessione locale",
+        welcome: "Ciao, sono Maya. Sono cresciuta nel Queens, a New York, ma vivo a Londra da qualche anno, e sto costruendo una torrefazione indipendente e una caffetteria di quartiere qui a Islington, con caffè confezionato, abbigliamento e merchandising utile. Chiedimi dell'attività o mostrami il tuo ragionamento. Risponderò come tua cliente e ti indicherò il prossimo passo del corso.",
+        unavailable: "Maya non ha potuto completare la risposta. Verifica che LM Studio e il server locale siano attivi con un modello Qwen caricato, poi riprova.",
+        tooLarge: "Scegli un'immagine più piccola di 4 MB.", selected: "Allegato:",
+        dropHint: "Trascina qui le immagini", removeAttachment: "Rimuovi",
+        skippedType: "Ignorati (non sono immagini):", skippedSize: "Ignorati (più di 4 MB):", skippedLimit: "Ignorati (massimo 4 immagini per messaggio):",
+        suggestions: ["Cosa conta di più per il pubblico?", "Come non deve mai sembrare il brand?", "Voglio presentare un territorio creativo."],
+        voice: "Risposta vocale", portraitAlt: "Maya Bennett dietro al bancone della caffetteria fittizia",
+        micIdle: "🎙️ Parla con Maya", micRecording: "⏺ Registrazione… tocca per fermare", micTranscribing: "Trascrizione…",
+        micError: "Impossibile trascrivere la registrazione.",
+        micOffline: "Il server vocale non \u00e8 in esecuzione.",
+        micUnavailable: "L'input vocale richiede il riconoscimento vocale del browser oppure il server whisper locale, e al momento nessuno dei due \u00e8 disponibile. Scrivi la tua domanda.",
+        micDenied: "Accesso al microfono bloccato. Consenti il microfono per questa pagina nelle impostazioni del browser e riprova.",
+        conversationsLabel: "Conversazioni", noConversations: "Nessuna conversazione salvata.",
+        toggleFolder: "Espandi o comprimi cartella",
+        deleteConversation: "Elimina conversazione", confirmDelete: "Eliminare questa conversazione? L'azione non pu\u00f2 essere annullata.",
+        renameConversation: "Rinomina conversazione",
+        conversationLoadError: "Impossibile caricare questa conversazione.", untitled: "Conversazione senza titolo",
+        newFolderPrompt: "Dai un nome alla cartella:", newSubfolderPrompt: "Dai un nome alla sottocartella:",
+        deleteFolder: "Elimina cartella", newSubfolder: "Nuova sottocartella", renameFolderHint: "Doppio clic per rinominare",
+        confirmDeleteFolder: "Eliminare questa cartella? Conversazioni e sottocartelle al suo interno restano, solo spostate di un livello.",
+        ungrouped: "Senza cartella"
+      }
+    };
+
+    let language = localStorage.getItem("pancaldi-language") === "it" ? "it" : "en";
+    let conversation = [];
+    let currentConversationId = null;
+    let currentConversationTitle = null;
+    const MAX_IMAGES = 4;
+    const MAX_IMAGE_BYTES = 4 * 1024 * 1024;
+    const ACCEPTED_IMAGE_TYPES = ["image/png", "image/jpeg", "image/webp"];
+    let attachedImages = [];
+    let conversationSearchTerm = "";
+    let busy = false;
+    const messagesElement = document.querySelector("#messages");
+    const promptElement = document.querySelector("#prompt");
+    const imageInput = document.querySelector("#imageInput");
+    const chatPanel = document.querySelector(".chat");
+    const selectedFile = document.querySelector("#selectedFile");
+    const statusElement = document.querySelector("#status");
+    const voiceToggleButton = document.querySelector("#voiceToggle");
+    const voiceSelect = document.querySelector("#voiceSelect");
+    const micButton = document.querySelector("#micButton");
+    const portraitImg = document.querySelector("#portraitImg");
+    let voiceEnabled = localStorage.getItem("pancaldi-voice") === "1";
+
+    function updateVoiceButton() {
+      voiceToggleButton.setAttribute("aria-pressed", String(voiceEnabled));
+      voiceToggleButton.textContent = `${voiceEnabled ? "🔊" : "🔈"} ${copy[language].voice}`;
+    }
+
+    const FEMALE_VOICE_HINTS = {
+      en: ["samantha", "ava", "allison", "susan", "karen", "victoria", "zoe", "female", "google us english", "google uk english female"],
+      it: ["alice", "elsa", "female", "google italiano"]
+    };
+
+    function pickVoice(langPrefix) {
+      const voices = window.speechSynthesis.getVoices();
+      const inLang = voices.filter((voice) => voice.lang && voice.lang.toLowerCase().startsWith(langPrefix));
+      const hints = FEMALE_VOICE_HINTS[langPrefix] || [];
+      for (const hint of hints) {
+        const found = inLang.find((voice) => voice.name.toLowerCase().includes(hint));
+        if (found) return found;
+      }
+      return inLang[0] || null;
+    }
+
+    function populateVoiceSelect() {
+      if (!("speechSynthesis" in window) || !voiceSelect) return;
+      const langPrefix = language === "it" ? "it" : "en";
+      const voices = window.speechSynthesis.getVoices().filter((voice) => voice.lang && voice.lang.toLowerCase().startsWith(langPrefix));
+      const previous = voiceSelect.value;
+      voiceSelect.innerHTML = "";
+      voices.forEach((voice) => {
+        const option = document.createElement("option");
+        option.value = voice.name;
+        option.textContent = voice.name;
+        voiceSelect.append(option);
+      });
+      const saved = localStorage.getItem(`pancaldi-voice-name-${langPrefix}`);
+      const keep = voices.some((voice) => voice.name === previous) ? previous : null;
+      const fallback = pickVoice(langPrefix)?.name || (voices[0]?.name ?? "");
+      voiceSelect.value = (saved && voices.some((voice) => voice.name === saved)) ? saved : (keep || fallback);
+    }
+
+    // Queues one utterance after whatever is already speaking, so calling this per
+    // sentence as the reply streams in reads naturally instead of restarting each time.
+    // Callers that need to interrupt earlier speech (a new turn, voice toggled off) call
+    // speechSynthesis.cancel() themselves before queuing.
+    function speak(text) {
+      if (!voiceEnabled || !("speechSynthesis" in window) || !text || !text.trim()) return;
+      const utterance = new SpeechSynthesisUtterance(text.trim());
+      const langPrefix = language === "it" ? "it" : "en";
+      utterance.lang = language === "it" ? "it-IT" : "en-US";
+      const voices = window.speechSynthesis.getVoices();
+      const chosen = voices.find((voice) => voice.name === voiceSelect.value) || pickVoice(langPrefix);
+      if (chosen) utterance.voice = chosen;
+      window.speechSynthesis.speak(utterance);
+    }
+
+    // Pulls complete sentences off the front of unspoken text, leaving a trailing
+    // fragment (no terminal punctuation yet, or punctuation with nothing after it) for
+    // the next chunk — a period right at a stream-chunk boundary isn't proof of a real
+    // sentence end, but a period followed by more text is.
+    function extractSpeakableSentences(unspoken) {
+      const matches = unspoken.match(/[^.!?\n]+[.!?\n]+\s+/g);
+      return matches ? matches.join("") : "";
+    }
+
+    voiceToggleButton.addEventListener("click", () => {
+      voiceEnabled = !voiceEnabled;
+      localStorage.setItem("pancaldi-voice", voiceEnabled ? "1" : "0");
+      if (!voiceEnabled && "speechSynthesis" in window) window.speechSynthesis.cancel();
+      updateVoiceButton();
+    });
+
+    if ("speechSynthesis" in window) {
+      window.speechSynthesis.onvoiceschanged = populateVoiceSelect;
+    }
+
+    voiceSelect.addEventListener("change", () => {
+      const langPrefix = language === "it" ? "it" : "en";
+      localStorage.setItem(`pancaldi-voice-name-${langPrefix}`, voiceSelect.value);
+    });
+
+    let mediaRecorder = null;
+    let recordedChunks = [];
+    let recording = false;
+
+    const SpeechRecognitionCtor = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let transcribeAvailable = null;
+    let recognition = null;
+
+    // Two engines, same button. The local whisper server wins when it is running because
+    // nothing leaves the machine; otherwise the browser's own recogniser keeps the button
+    // working. Whisper takes over automatically the moment it appears - no page change.
+    function micAvailable() {
+      return transcribeAvailable === true || Boolean(SpeechRecognitionCtor);
+    }
+
+    function updateMicButton() {
+      micButton.textContent = recording ? copy[language].micRecording : copy[language].micIdle;
+      micButton.classList.toggle("recording", recording);
+      const unavailable = !micAvailable();
+      micButton.classList.toggle("unavailable", unavailable);
+      micButton.title = unavailable ? copy[language].micUnavailable : "";
+    }
+
+    // Speaking implies wanting to be spoken back to, so the mic turns voice replies on.
+    function sendTranscript(text) {
+      const transcript = (text || "").trim();
+      if (!transcript) return;
+      promptElement.value = promptElement.value ? `${promptElement.value} ${transcript}` : transcript;
+      if (!voiceEnabled) {
+        voiceEnabled = true;
+        localStorage.setItem("pancaldi-voice", "1");
+        updateVoiceButton();
+      }
+      document.querySelector("#composer").requestSubmit();
+    }
+
+    // MediaRecorder gives us webm/opus; whisper.cpp wants 16 kHz mono PCM. Converting in
+    // the browser keeps the server free of any ffmpeg dependency.
+    async function blobToWav16k(blob) {
+      const context = new (window.AudioContext || window.webkitAudioContext)();
+      const decoded = await context.decodeAudioData(await blob.arrayBuffer());
+      context.close();
+
+      const rate = 16000;
+      const offline = new OfflineAudioContext(1, Math.ceil(decoded.duration * rate), rate);
+      const source = offline.createBufferSource();
+      source.buffer = decoded;
+      source.connect(offline.destination);
+      source.start();
+      const samples = (await offline.startRendering()).getChannelData(0);
+
+      const buffer = new ArrayBuffer(44 + samples.length * 2);
+      const view = new DataView(buffer);
+      const writeString = (offset, value) => {
+        for (let i = 0; i < value.length; i++) view.setUint8(offset + i, value.charCodeAt(i));
+      };
+      writeString(0, "RIFF");
+      view.setUint32(4, 36 + samples.length * 2, true);
+      writeString(8, "WAVE");
+      writeString(12, "fmt ");
+      view.setUint32(16, 16, true);
+      view.setUint16(20, 1, true);
+      view.setUint16(22, 1, true);
+      view.setUint32(24, rate, true);
+      view.setUint32(28, rate * 2, true);
+      view.setUint16(32, 2, true);
+      view.setUint16(34, 16, true);
+      writeString(36, "data");
+      view.setUint32(40, samples.length * 2, true);
+      for (let i = 0; i < samples.length; i++) {
+        const sample = Math.max(-1, Math.min(1, samples[i]));
+        view.setInt16(44 + i * 2, sample < 0 ? sample * 0x8000 : sample * 0x7fff, true);
+      }
+      return new Blob([buffer], { type: "audio/wav" });
+    }
+
+    async function transcribeAndFill(blob) {
+      micButton.disabled = true;
+      micButton.textContent = copy[language].micTranscribing;
+      try {
+        const response = await fetch("/api/transcribe", {
+          method: "POST",
+          headers: { "Content-Type": "audio/wav", "X-Language": language === "it" ? "it" : "en" },
+          body: await blobToWav16k(blob)
+        });
+        const data = await response.json().catch(() => ({}));
+        if (data.code === "unsupported") {
+          transcribeAvailable = false;
+          addMessage("assistant", copy[language].micUnavailable, { error: true });
+          return;
+        }
+        if (data.code === "offline") {
+          addMessage("assistant", `${copy[language].micOffline}\n\n${data.hint || ""}`.trim(), { error: true });
+          return;
+        }
+        if (!response.ok) throw new Error(data.hint || data.error || copy[language].micError);
+        sendTranscript(data.text);
+      } catch (error) {
+        addMessage("assistant", `${copy[language].micError}\n\n${error.message}`, { error: true });
+      } finally {
+        micButton.disabled = false;
+        updateMicButton();
+      }
+    }
+
+    async function startWhisperRecording() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        recordedChunks = [];
+        mediaRecorder = new MediaRecorder(stream);
+        mediaRecorder.addEventListener("dataavailable", (event) => {
+          if (event.data.size > 0) recordedChunks.push(event.data);
+        });
+        mediaRecorder.addEventListener("stop", () => {
+          stream.getTracks().forEach((track) => track.stop());
+          recording = false;
+          const blob = new Blob(recordedChunks, { type: mediaRecorder.mimeType || "audio/webm" });
+          transcribeAndFill(blob);
+        });
+        mediaRecorder.start();
+        recording = true;
+        updateMicButton();
+      } catch (error) {
+        recording = false;
+        updateMicButton();
+        addMessage("assistant", copy[language].micDenied, { error: true });
+      }
+    }
+
+    function startBrowserRecognition() {
+      let finalText = "";
+      recognition = new SpeechRecognitionCtor();
+      recognition.lang = language === "it" ? "it-IT" : "en-US";
+      recognition.interimResults = false;
+      recognition.continuous = false;
+      recognition.maxAlternatives = 1;
+
+      recognition.addEventListener("result", (event) => {
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          if (event.results[i].isFinal) finalText += event.results[i][0].transcript;
+        }
+      });
+      recognition.addEventListener("error", (event) => {
+        recognition = null;
+        recording = false;
+        updateMicButton();
+        if (event.error === "not-allowed" || event.error === "service-not-allowed") {
+          addMessage("assistant", copy[language].micDenied, { error: true });
+        } else if (event.error !== "aborted" && event.error !== "no-speech") {
+          addMessage("assistant", copy[language].micError, { error: true });
+        }
+      });
+      recognition.addEventListener("end", () => {
+        recognition = null;
+        recording = false;
+        updateMicButton();
+        sendTranscript(finalText);
+      });
+
+      recognition.start();
+      recording = true;
+      updateMicButton();
+    }
+
+    async function toggleRecording() {
+      if (recording) {
+        if (recognition) recognition.stop();
+        else if (mediaRecorder) mediaRecorder.stop();
+        return;
+      }
+      if (!micAvailable()) {
+        addMessage("assistant", copy[language].micUnavailable, { error: true });
+        return;
+      }
+      if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+      if (transcribeAvailable === true) return startWhisperRecording();
+      startBrowserRecognition();
+    }
+
+    micButton.addEventListener("click", toggleRecording);
+
+    function addMessage(role, content, options = {}) {
+      const item = document.createElement("div");
+      item.className = `message ${role}${options.error ? " error" : ""}`;
+      const label = document.createElement("span");
+      label.className = "label";
+      label.textContent = role === "user" ? copy[language].you : options.error ? copy[language].error : copy[language].maya;
+      const bubble = document.createElement("div");
+      bubble.className = "bubble";
+      const textSpan = document.createElement("span");
+      textSpan.className = "bubble-text";
+      textSpan.dataset.raw = content;
+      appendHighlighted(textSpan, content, conversationSearchTerm.trim());
+      bubble.append(textSpan);
+      item.append(label, bubble);
+      if (options.images && options.images.length) {
+        const gallery = document.createElement("div");
+        gallery.className = "attachment-gallery";
+        options.images.forEach((attachment) => {
+          const image = document.createElement("img");
+          image.className = "attachment-preview";
+          image.src = attachment.dataUrl;
+          image.alt = attachment.name || "Attached design idea";
+          gallery.append(image);
+        });
+        bubble.append(gallery);
+      }
+      messagesElement.append(item);
+      messagesElement.scrollTop = messagesElement.scrollHeight;
+      return item;
+    }
+
+    function resetChat() {
+      if (busy) return;
+      promptElement.value = "";
+      conversation = [];
+      currentConversationId = null;
+      currentConversationTitle = null;
+      messagesElement.innerHTML = "";
+      clearImages();
+      if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+      addMessage("assistant", copy[language].welcome);
+      promptElement.focus();
+      renderConversationList();
+    }
+
+    function newConversationId() {
+      return (crypto.randomUUID ? crypto.randomUUID() : `c-${Date.now()}-${Math.random().toString(36).slice(2)}`);
+    }
+
+    function formatConversationDate(iso) {
+      if (!iso) return "";
+      const date = new Date(iso);
+      const locale = language === "it" ? "it-IT" : "en-GB";
+      const day = date.toLocaleDateString(locale, { day: "numeric", month: "short" });
+      const time = date.toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit" });
+      return `${day} · ${time}`;
+    }
+
+    // Every reply saves the whole conversation to disk via the server (see /api/conversations
+    // in server.mjs), so nothing is lost if the tab closes or the learner switches sessions.
+    async function saveConversation() {
+      if (!conversation.length) return;
+      if (!currentConversationId) currentConversationId = newConversationId();
+      try {
+        const response = await fetch(`/api/conversations/${encodeURIComponent(currentConversationId)}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ title: currentConversationTitle, language, messages: conversation })
+        });
+        const data = await response.json().catch(() => null);
+        if (!response.ok || !data) throw new Error("Save failed");
+        currentConversationTitle = data.title;
+      } catch {
+        addMessage("assistant", copy[language].saveError, { error: true });
+      }
+      renderConversationList();
+    }
+
+    // Splits on a capturing regex so the matched slices land at odd indices, then rebuilds
+    // the text as a mix of plain text nodes and <mark> elements — safe against HTML in the
+    // source text since nothing is ever parsed as markup.
+    function appendHighlighted(container, text, term) {
+      if (!term) {
+        container.append(document.createTextNode(text));
+        return;
+      }
+      const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const parts = text.split(new RegExp(`(${escaped})`, "ig"));
+      parts.forEach((part, index) => {
+        if (!part) return;
+        if (index % 2 === 1) {
+          const mark = document.createElement("mark");
+          mark.className = "search-mark";
+          mark.textContent = part;
+          container.append(mark);
+        } else {
+          container.append(document.createTextNode(part));
+        }
+      });
+    }
+
+    // Re-marks every message currently on screen against the latest search term. addMessage()
+    // already highlights on first render (for messages loaded from a saved conversation), but
+    // this covers the term changing while that conversation is already open — each bubble's
+    // original text lives in data-raw, which stays correct even after a previous highlight
+    // pass, since reading a marked-up element's textContent still yields the plain text.
+    function reapplyMessageHighlights() {
+      const term = conversationSearchTerm.trim();
+      document.querySelectorAll("#messages .bubble-text").forEach((span) => {
+        span.innerHTML = "";
+        appendHighlighted(span, span.dataset.raw, term);
+      });
+    }
+
+    // Two calls can overlap (e.g. the page-load render and a search render fired close
+    // together) and their fetches can resolve out of order. A generation counter makes a
+    // stale response a no-op instead of letting it clobber a newer one that finished first.
+    // Moves (or clears, when folderId is null) which folder a conversation belongs to. Used
+    // by both the drag-and-drop handlers below and nowhere else, since folder membership is
+    // never touched by the regular chat-driven autosave (see server.mjs).
+    async function setConversationFolder(id, folderId) {
+      try {
+        await fetch(`/api/conversations/${encodeURIComponent(id)}/folder`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ folderId })
+        });
+      } catch {
+        // Best-effort; the list re-render below just won't reflect the move.
+      }
+      renderConversationList();
+    }
+
+    // Separate from the chat-driven autosave (PUT /api/conversations/:id) for the same reason
+    // as setConversationFolder: renaming works on any conversation in the list, not just the
+    // open one, so the client can't be expected to have its full message history in memory.
+    async function renameConversationTitle(id, title) {
+      try {
+        await fetch(`/api/conversations/${encodeURIComponent(id)}/title`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ title })
+        });
+      } catch {
+        // Best-effort.
+      }
+      // If the renamed conversation is the one currently open, currentConversationTitle must
+      // follow — otherwise the next chat-driven autosave would resend the old title and the
+      // rename would silently revert the moment another message is sent.
+      if (id === currentConversationId) currentConversationTitle = title;
+      renderConversationList();
+    }
+
+    function startRenameConversation(item, li) {
+      const row = li.querySelector(".conversation-item-row");
+      const input = document.createElement("input");
+      input.type = "text";
+      input.className = "conversation-rename-input";
+      input.value = item.title || copy[language].untitled;
+      row.replaceWith(input);
+      input.focus();
+      input.select();
+
+      let settled = false;
+      const commit = () => {
+        if (settled) return;
+        settled = true;
+        const value = input.value.trim();
+        if (value && value !== item.title) renameConversationTitle(item.id, value);
+        else renderConversationList();
+      };
+      input.addEventListener("blur", commit);
+      input.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") { event.preventDefault(); input.blur(); }
+        if (event.key === "Escape") { event.preventDefault(); settled = true; renderConversationList(); }
+      });
+    }
+
+    // parentId: null creates a root folder; pass an existing folder's id to nest the new one
+    // under it (the "+" on each folder header does this). Folders are purely designer-named
+    // labels — nothing here assumes weeks, or any particular scheme.
+    async function createFolder(parentId) {
+      const name = window.prompt(parentId ? copy[language].newSubfolderPrompt : copy[language].newFolderPrompt);
+      if (!name || !name.trim()) return;
+      try {
+        await fetch("/api/folders", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name: name.trim(), parentId: parentId || null })
+        });
+      } catch {
+        // Best-effort; the list re-render below just won't show the new folder.
+      }
+      renderConversationList();
+    }
+
+    async function renameFolder(id, name) {
+      try {
+        await fetch(`/api/folders/${encodeURIComponent(id)}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name })
+        });
+      } catch {
+        // Best-effort.
+      }
+      renderConversationList();
+    }
+
+    // Re-parents an existing folder (drag a folder onto another folder to nest it, or onto the
+    // list background to pull it back to the top level). The server rejects moving a folder
+    // inside its own descendant; a rejection just means the re-render below shows it unmoved.
+    async function setFolderParent(id, parentId) {
+      try {
+        await fetch(`/api/folders/${encodeURIComponent(id)}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ parentId })
+        });
+      } catch {
+        // Best-effort.
+      }
+      renderConversationList();
+    }
+
+    function startRenameFolder(folder, nameSpan) {
+      const input = document.createElement("input");
+      input.type = "text";
+      input.className = "folder-rename-input";
+      input.value = folder.name;
+      nameSpan.replaceWith(input);
+      input.focus();
+      input.select();
+
+      let settled = false;
+      const commit = () => {
+        if (settled) return;
+        settled = true;
+        const value = input.value.trim();
+        if (value && value !== folder.name) renameFolder(folder.id, value);
+        else renderConversationList();
+      };
+      input.addEventListener("blur", commit);
+      input.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") { event.preventDefault(); input.blur(); }
+        if (event.key === "Escape") { event.preventDefault(); settled = true; renderConversationList(); }
+      });
+    }
+
+    const DRAG_MIME = "application/x-conversation-id";
+    const FOLDER_DRAG_MIME = "application/x-folder-id";
+    const FOLDER_ICON_SVG = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4.5l2 2H19a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"></path></svg>';
+    const CHEVRON_ICON_SVG = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>';
+    // Folders default to expanded; only ids explicitly collapsed by the learner land here.
+    // In-memory only (like currentConversationId) — a page reload re-expands everything.
+    const collapsedFolders = new Set();
+
+    function buildConversationItem(item, term) {
+      const li = document.createElement("li");
+      li.className = "conversation-item"
+        + (item.id === currentConversationId ? " active" : "")
+        + (term && item.matches ? " match" : "");
+      li.dataset.id = item.id;
+      li.draggable = true;
+      li.addEventListener("dragstart", (event) => {
+        event.dataTransfer.setData(DRAG_MIME, item.id);
+        event.dataTransfer.effectAllowed = "move";
+        li.classList.add("dragging");
+      });
+      li.addEventListener("dragend", () => li.classList.remove("dragging"));
+
+      const row = document.createElement("div");
+      row.className = "conversation-item-row";
+
+      const openButton = document.createElement("button");
+      openButton.type = "button";
+      openButton.className = "conversation-open";
+      const titleSpan = document.createElement("span");
+      titleSpan.className = "conversation-title";
+      const titleText = item.title || copy[language].untitled;
+      if (term && item.matches) appendHighlighted(titleSpan, titleText, term);
+      else titleSpan.textContent = titleText;
+      openButton.append(titleSpan);
+
+      if (term && item.matches && item.snippet) {
+        const snippetSpan = document.createElement("span");
+        snippetSpan.className = "conversation-snippet";
+        appendHighlighted(snippetSpan, item.snippet, term);
+        openButton.append(snippetSpan);
+      }
+
+      const dateSpan = document.createElement("span");
+      dateSpan.className = "conversation-date";
+      dateSpan.textContent = formatConversationDate(item.updatedAt);
+      openButton.append(dateSpan);
+      openButton.addEventListener("click", () => openConversation(item.id));
+
+      const renameButton = document.createElement("button");
+      renameButton.type = "button";
+      renameButton.className = "conversation-rename";
+      renameButton.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>';
+      renameButton.setAttribute("aria-label", copy[language].renameConversation);
+      renameButton.title = copy[language].renameConversation;
+      renameButton.addEventListener("click", (event) => {
+        event.stopPropagation();
+        startRenameConversation(item, li);
+      });
+
+      const deleteButton = document.createElement("button");
+      deleteButton.type = "button";
+      deleteButton.className = "conversation-delete";
+      deleteButton.setAttribute("aria-label", copy[language].deleteConversation);
+      deleteButton.textContent = "×";
+      deleteButton.addEventListener("click", async (event) => {
+        event.stopPropagation();
+        if (!window.confirm(copy[language].confirmDelete)) return;
+        await fetch(`/api/conversations/${encodeURIComponent(item.id)}`, { method: "DELETE" });
+        if (item.id === currentConversationId) resetChat();
+        else renderConversationList();
+      });
+
+      row.append(openButton, renameButton, deleteButton);
+      li.append(row);
+      return li;
+    }
+
+    // folder here is a tree node (see buildFolderTree): {..., children: [...]}. byFolder maps
+    // folderId -> that folder's own conversations (not its children's).
+    function buildFolderGroup(folder, byFolder, term) {
+      const li = document.createElement("li");
+      li.className = "folder-group" + (collapsedFolders.has(folder.id) ? "" : " expanded");
+      li.dataset.id = folder.id;
+
+      const headerRow = document.createElement("div");
+      headerRow.className = "folder-header-row";
+      headerRow.draggable = true;
+
+      const nameWrap = document.createElement("span");
+      nameWrap.className = "folder-name-wrap";
+      const toggleButton = document.createElement("button");
+      toggleButton.type = "button";
+      toggleButton.className = "folder-toggle";
+      toggleButton.innerHTML = CHEVRON_ICON_SVG;
+      toggleButton.setAttribute("aria-label", copy[language].toggleFolder);
+      toggleButton.addEventListener("click", (event) => {
+        event.stopPropagation();
+        if (collapsedFolders.has(folder.id)) collapsedFolders.delete(folder.id);
+        else collapsedFolders.add(folder.id);
+        renderConversationList();
+      });
+      const icon = document.createElement("span");
+      icon.className = "folder-icon";
+      icon.innerHTML = FOLDER_ICON_SVG;
+      const name = document.createElement("span");
+      name.className = "folder-name";
+      name.textContent = folder.name;
+      name.title = copy[language].renameFolderHint;
+      name.addEventListener("dblclick", (event) => {
+        event.stopPropagation();
+        startRenameFolder(folder, name);
+      });
+      nameWrap.append(toggleButton, icon, name);
+
+      const actions = document.createElement("span");
+      actions.className = "folder-actions";
+      const addChildButton = document.createElement("button");
+      addChildButton.type = "button";
+      addChildButton.className = "folder-add-child";
+      addChildButton.textContent = "+";
+      addChildButton.setAttribute("aria-label", copy[language].newSubfolder);
+      addChildButton.title = copy[language].newSubfolder;
+      addChildButton.addEventListener("click", (event) => {
+        event.stopPropagation();
+        createFolder(folder.id);
+      });
+      const deleteButton = document.createElement("button");
+      deleteButton.type = "button";
+      deleteButton.className = "folder-delete";
+      deleteButton.setAttribute("aria-label", copy[language].deleteFolder);
+      deleteButton.textContent = "×";
+      deleteButton.addEventListener("click", async (event) => {
+        event.stopPropagation();
+        if (!window.confirm(copy[language].confirmDeleteFolder)) return;
+        await fetch(`/api/folders/${encodeURIComponent(folder.id)}`, { method: "DELETE" });
+        renderConversationList();
+      });
+      actions.append(addChildButton, deleteButton);
+
+      headerRow.append(nameWrap, actions);
+
+      headerRow.addEventListener("dragstart", (event) => {
+        event.stopPropagation();
+        event.dataTransfer.setData(FOLDER_DRAG_MIME, folder.id);
+        event.dataTransfer.effectAllowed = "move";
+        headerRow.classList.add("dragging");
+      });
+      headerRow.addEventListener("dragend", () => headerRow.classList.remove("dragging"));
+
+      // stopPropagation on both ends keeps the list-level "drop to ungroup" zone (below)
+      // from also lighting up while hovering a specific folder.
+      headerRow.addEventListener("dragover", (event) => {
+        const types = Array.from(event.dataTransfer?.types || []);
+        if (!types.includes(DRAG_MIME) && !types.includes(FOLDER_DRAG_MIME)) return;
+        event.preventDefault();
+        event.stopPropagation();
+        headerRow.classList.add("drop-target");
+      });
+      headerRow.addEventListener("dragleave", () => headerRow.classList.remove("drop-target"));
+      headerRow.addEventListener("drop", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        headerRow.classList.remove("drop-target");
+        const conversationId = event.dataTransfer.getData(DRAG_MIME);
+        if (conversationId) return setConversationFolder(conversationId, folder.id);
+        const draggedFolderId = event.dataTransfer.getData(FOLDER_DRAG_MIME);
+        if (draggedFolderId && draggedFolderId !== folder.id) setFolderParent(draggedFolderId, folder.id);
+      });
+
+      const childrenList = document.createElement("ul");
+      childrenList.className = "folder-children";
+      (folder.children || []).forEach((child) => childrenList.append(buildFolderGroup(child, byFolder, term)));
+
+      const conversationsList = document.createElement("ul");
+      conversationsList.className = "folder-conversations";
+      (byFolder.get(folder.id) || []).forEach((item) => conversationsList.append(buildConversationItem(item, term)));
+
+      li.append(headerRow, childrenList, conversationsList);
+      return li;
+    }
+
+    function buildFolderTree(folders) {
+      const byId = new Map(folders.map((folder) => [folder.id, { ...folder, children: [] }]));
+      const roots = [];
+      byId.forEach((folder) => {
+        const parent = folder.parentId && byId.get(folder.parentId);
+        if (parent) parent.children.push(folder);
+        else roots.push(folder);
+      });
+      return roots;
+    }
+
+    let conversationListRequestId = 0;
+    async function renderConversationList() {
+      const list = document.querySelector("#conversationsList");
+      const term = conversationSearchTerm.trim();
+      const requestId = ++conversationListRequestId;
+      try {
+        const url = term ? `/api/conversations?q=${encodeURIComponent(term)}` : "/api/conversations";
+        const [conversationsResponse, foldersResponse] = await Promise.all([fetch(url), fetch("/api/folders")]);
+        const conversationsData = await conversationsResponse.json();
+        const foldersData = await foldersResponse.json();
+        if (requestId !== conversationListRequestId) return;
+        const conversations = conversationsData.conversations || [];
+        const folders = foldersData.folders || [];
+        list.innerHTML = "";
+
+        if (!conversations.length) {
+          const empty = document.createElement("li");
+          empty.className = "conversations-empty";
+          empty.textContent = copy[language].noConversations;
+          list.append(empty);
+          return;
+        }
+
+        // No folders yet: render the flat list exactly as before, so nothing about this
+        // feature is visible until the learner actually creates a folder.
+        if (!folders.length) {
+          conversations.forEach((item) => list.append(buildConversationItem(item, term)));
+          return;
+        }
+
+        // A folderId that doesn't match any current folder (e.g. its folder was deleted)
+        // is treated as ungrouped rather than dropped — nothing to clean up server-side.
+        const folderIds = new Set(folders.map((folder) => folder.id));
+        const byFolder = new Map(folders.map((folder) => [folder.id, []]));
+        const ungrouped = [];
+        conversations.forEach((item) => {
+          if (item.folderId && folderIds.has(item.folderId)) byFolder.get(item.folderId).push(item);
+          else ungrouped.push(item);
+        });
+
+        const tree = buildFolderTree(folders);
+        tree.forEach((folder) => list.append(buildFolderGroup(folder, byFolder, term)));
+
+        if (ungrouped.length) {
+          const label = document.createElement("li");
+          label.className = "ungrouped-label";
+          label.textContent = copy[language].ungrouped;
+          list.append(label);
+          ungrouped.forEach((item) => list.append(buildConversationItem(item, term)));
+        }
+      } catch {
+        // Listing failures are non-critical; the chat itself still works without it.
+      }
+    }
+
+    async function openConversation(id) {
+      if (busy) return;
+      try {
+        const response = await fetch(`/api/conversations/${encodeURIComponent(id)}`);
+        if (!response.ok) throw new Error("not found");
+        const data = await response.json();
+        currentConversationId = data.id;
+        currentConversationTitle = data.title;
+        conversation = (data.messages || []).map((message) => ({ role: message.role, content: message.content }));
+        setLanguage(data.language === "it" ? "it" : "en", { reset: false });
+        messagesElement.innerHTML = "";
+        conversation.forEach((message) => addMessage(message.role, message.content));
+        clearImages();
+        if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+        promptElement.focus();
+        renderConversationList();
+      } catch {
+        addMessage("assistant", copy[language].conversationLoadError, { error: true });
+      }
+    }
+
+    function setLanguage(nextLanguage, { reset = true } = {}) {
+      if (busy) return;
+      language = nextLanguage === "it" ? "it" : "en";
+      if (reset) localStorage.setItem("pancaldi-language", language);
+      document.documentElement.lang = language;
+      document.querySelectorAll("[data-copy]").forEach((element) => {
+        const value = copy[language][element.dataset.copy];
+        if (value) element.textContent = value;
+      });
+      document.querySelectorAll("[data-language]").forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.language === language)));
+      promptElement.placeholder = promptElement.dataset[`placeholder${language === "it" ? "It" : "En"}`];
+      const searchInput = document.querySelector("#conversationsSearch");
+      searchInput.placeholder = searchInput.dataset[`placeholder${language === "it" ? "It" : "En"}`];
+      const suggestions = document.querySelector("#suggestions");
+      suggestions.innerHTML = "";
+      copy[language].suggestions.forEach((suggestion) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.textContent = suggestion;
+        button.addEventListener("click", () => { promptElement.value = suggestion; promptElement.focus(); });
+        suggestions.append(button);
+      });
+      if (portraitImg) portraitImg.alt = copy[language].portraitAlt;
+      updateVoiceButton();
+      updateMicButton();
+      populateVoiceSelect();
+      if (reset && !conversation.length) resetChat();
+      checkHealth();
+    }
+
+    function clearImages() {
+      attachedImages = [];
+      imageInput.value = "";
+      renderAttachedFiles();
+    }
+
+    function renderAttachedFiles() {
+      selectedFile.innerHTML = "";
+      if (!attachedImages.length) return;
+      const label = document.createElement("span");
+      label.textContent = copy[language].selected;
+      selectedFile.append(label);
+      attachedImages.forEach((attachment, index) => {
+        const chip = document.createElement("span");
+        chip.className = "attachment-chip";
+        chip.textContent = attachment.name;
+        const remove = document.createElement("button");
+        remove.type = "button";
+        remove.className = "attachment-remove";
+        remove.setAttribute("aria-label", copy[language].removeAttachment);
+        remove.textContent = "×";
+        remove.addEventListener("click", () => {
+          attachedImages.splice(index, 1);
+          renderAttachedFiles();
+        });
+        chip.append(remove);
+        selectedFile.append(chip);
+      });
+    }
+
+    function readFileAsDataUrl(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.addEventListener("load", () => resolve(String(reader.result)));
+        reader.addEventListener("error", () => reject(reader.error));
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // Shared by the click-to-browse input and drag-and-drop: validates each file, skips
+    // (rather than blocks on) anything invalid, and reports skips in one summary message
+    // instead of one native alert() per bad file.
+    async function addFiles(fileList) {
+      if (busy) return;
+      const skippedType = [];
+      const skippedSize = [];
+      const skippedLimit = [];
+      for (const file of Array.from(fileList)) {
+        if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
+          skippedType.push(file.name);
+          continue;
+        }
+        if (attachedImages.length >= MAX_IMAGES) {
+          skippedLimit.push(file.name);
+          continue;
+        }
+        if (file.size > MAX_IMAGE_BYTES) {
+          skippedSize.push(file.name);
+          continue;
+        }
+        attachedImages.push({ name: file.name, dataUrl: await readFileAsDataUrl(file) });
+      }
+      renderAttachedFiles();
+      const notes = [];
+      if (skippedType.length) notes.push(`${copy[language].skippedType} ${skippedType.join(", ")}`);
+      if (skippedSize.length) notes.push(`${copy[language].skippedSize} ${skippedSize.join(", ")}`);
+      if (skippedLimit.length) notes.push(`${copy[language].skippedLimit} ${skippedLimit.join(", ")}`);
+      if (notes.length) addMessage("assistant", notes.join("\n"), { error: true });
+    }
+
+    async function checkHealth() {
+      statusElement.classList.remove("connected");
+      statusElement.lastElementChild.textContent = copy[language].checking;
+      try {
+        const response = await fetch("/api/health");
+        const data = await response.json();
+        statusElement.classList.toggle("connected", Boolean(data.connected));
+        statusElement.lastElementChild.textContent = data.connected ? `${copy[language].connected} · ${data.configuredModel}` : copy[language].disconnected;
+        statusElement.title = data.message || data.configuredModel || "";
+        if (typeof data.transcribeAvailable === "boolean") {
+          transcribeAvailable = data.transcribeAvailable;
+          updateMicButton();
+        }
+      } catch {
+        statusElement.lastElementChild.textContent = copy[language].disconnected;
+      }
+    }
+
+    imageInput.addEventListener("change", () => {
+      if (imageInput.files.length) addFiles(imageInput.files);
+      imageInput.value = "";
+    });
+
+    // Drag-and-drop target is the whole chat panel (messages + composer), not just the
+    // upload button, so dropping anywhere in the conversation area attaches the files.
+    ["dragenter", "dragover"].forEach((eventName) => {
+      chatPanel.addEventListener(eventName, (event) => {
+        if (!Array.from(event.dataTransfer?.types || []).includes("Files")) return;
+        event.preventDefault();
+        chatPanel.classList.add("drag-over");
+      });
+    });
+    chatPanel.addEventListener("dragleave", (event) => {
+      if (chatPanel.contains(event.relatedTarget)) return;
+      chatPanel.classList.remove("drag-over");
+    });
+    chatPanel.addEventListener("drop", (event) => {
+      if (!event.dataTransfer?.files?.length) return;
+      event.preventDefault();
+      chatPanel.classList.remove("drag-over");
+      addFiles(event.dataTransfer.files);
+    });
+    // Safety net: without this, dropping a file anywhere else on the page (or missing the
+    // drop zone by a few pixels) makes the browser navigate to it and lose the conversation.
+    window.addEventListener("dragover", (event) => event.preventDefault());
+    window.addEventListener("drop", (event) => event.preventDefault());
+
+    document.querySelector("#composer").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const content = promptElement.value.trim();
+      if (!content || busy) return;
+      busy = true;
+      setChatBusy(true);
+      if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+      const currentImages = attachedImages.slice();
+      addMessage("user", content, { images: currentImages });
+      conversation.push({ role: "user", content });
+      promptElement.value = "";
+      clearImages();
+      const sendButton = document.querySelector("#send");
+      sendButton.disabled = true;
+      sendButton.textContent = copy[language].sending;
+      const pending = addMessage("assistant", copy[language].sending);
+
+      const pendingBubble = pending.querySelector(".bubble");
+      try {
+        let response = await fetch("/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ language, messages: conversation, images: currentImages.map((image) => image.dataUrl) })
+        });
+        // Protected remote access uses short polling requests: Quick Tunnels cannot
+        // forward the local streaming response, and generation can take a minute.
+        if (response.status === 202) {
+          const { jobId } = await response.json();
+          const deadline = Date.now() + 150_000;
+          let result = null;
+          while (Date.now() < deadline) {
+            await new Promise((resolve) => setTimeout(resolve, 1200));
+            const poll = await fetch(`/api/chat/jobs/${encodeURIComponent(jobId)}`);
+            if (!poll.ok) throw new Error(copy[language].unavailable);
+            const state = await poll.json();
+            if (state.error) throw new Error(state.error);
+            if (state.done) { result = state; break; }
+          }
+          if (!result) throw new Error(copy[language].unavailable);
+          response = new Response(`data: ${JSON.stringify({ delta: result.reply })}\n\ndata: ${JSON.stringify(result)}\n\n`, {
+            headers: { "Content-Type": "text/event-stream" }
+          });
+        }
+        if (!response.ok) {
+          const data = await response.json().catch(() => ({}));
+          throw new Error(data.detail || data.hint || data.error || copy[language].unavailable);
+        }
+        pendingBubble.textContent = "";
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = "";
+        let fullReply = "";
+        let spokenLength = 0;
+        let finalPayload = null;
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+          const events = buffer.split("\n\n");
+          buffer = events.pop();
+          for (const rawEvent of events) {
+            const line = rawEvent.trim();
+            if (!line.startsWith("data:")) continue;
+            let payload;
+            try { payload = JSON.parse(line.slice(5).trim()); } catch { continue; }
+            if (payload.error) throw new Error(payload.error);
+            if (payload.delta) {
+              fullReply += payload.delta;
+              pendingBubble.textContent = fullReply;
+              messagesElement.scrollTop = messagesElement.scrollHeight;
+              // Speak each sentence as soon as it lands instead of waiting for the whole
+              // reply, so Maya starts talking after the first sentence, not after generation
+              // finishes minutes later.
+              const speakable = extractSpeakableSentences(fullReply.slice(spokenLength));
+              if (speakable) {
+                speak(speakable);
+                spokenLength += speakable.length;
+              }
+            }
+            if (payload.done) finalPayload = payload;
+          }
+        }
+        if (!finalPayload) throw new Error(copy[language].unavailable);
+        conversation.push({ role: "assistant", content: finalPayload.reply });
+        pendingBubble.textContent = finalPayload.reply;
+        speak(fullReply.slice(spokenLength));
+        if (finalPayload.visionFallback) addMessage("assistant", copy[language].visionFallback, { error: true });
+        await saveConversation();
+      } catch (error) {
+        pending.remove();
+        conversation.pop();
+        if (!promptElement.value) promptElement.value = content;
+        attachedImages = currentImages;
+        renderAttachedFiles();
+        addMessage("assistant", `${copy[language].unavailable}\n\n${error.message}`, { error: true });
+      } finally {
+        busy = false;
+        setChatBusy(false);
+        sendButton.disabled = false;
+        sendButton.textContent = copy[language].send;
+        promptElement.focus();
+        checkHealth();
+      }
+    });
+
+    promptElement.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        document.querySelector("#composer").requestSubmit();
+      }
+    });
+    function setChatBusy(value) {
+      document.querySelectorAll('#startCourse, #reset, #newConversation, [data-language], #imageInput, #micButton, .conversation-nav button').forEach((button) => { button.disabled = value; });
+      document.querySelector('.conversation-nav').style.pointerEvents = value ? 'none' : '';
+      document.querySelector('#uploadLabel').classList.toggle('disabled', value);
+    }
+    document.querySelector("#startCourse").addEventListener("click", () => {
+      if (busy) return;
+      resetChat();
+      promptElement.value = copy[language].coursePrompt;
+      document.querySelector("#composer").requestSubmit();
+    });
+    document.querySelector("#reset").addEventListener("click", resetChat);
+    document.querySelector("#newConversation").addEventListener("click", resetChat);
+    document.querySelector("#newFolder").addEventListener("click", () => createFolder(null));
+    // Dropping a conversation on empty list background ungroups it; dropping a folder there
+    // pulls it back to the top level. Either way, a drop on a specific folder header stops
+    // propagation before it reaches here (see buildFolderGroup).
+    const conversationsListEl = document.querySelector("#conversationsList");
+    conversationsListEl.addEventListener("dragover", (event) => {
+      const types = Array.from(event.dataTransfer?.types || []);
+      if (!types.includes(DRAG_MIME) && !types.includes(FOLDER_DRAG_MIME)) return;
+      event.preventDefault();
+      conversationsListEl.classList.add("drop-target");
+    });
+    conversationsListEl.addEventListener("dragleave", (event) => {
+      if (conversationsListEl.contains(event.relatedTarget)) return;
+      conversationsListEl.classList.remove("drop-target");
+    });
+    conversationsListEl.addEventListener("drop", (event) => {
+      event.preventDefault();
+      conversationsListEl.classList.remove("drop-target");
+      const conversationId = event.dataTransfer.getData(DRAG_MIME);
+      if (conversationId) return setConversationFolder(conversationId, null);
+      const folderId = event.dataTransfer.getData(FOLDER_DRAG_MIME);
+      if (folderId) setFolderParent(folderId, null);
+    });
+    // Safety net: a drop that lands on a specific folder header stops propagation before it
+    // reaches the list's own "drop" handler above, so if the cursor ever passed over the list's
+    // own background earlier in the same drag (almost unavoidable — the folder is inside the
+    // list), the list keeps its drop-target outline stuck on indefinitely. dragend fires on the
+    // dragged element regardless of where (or whether) it was dropped, so it's the one place
+    // that reliably clears every drop-target class this drag might have left behind.
+    conversationsListEl.addEventListener("dragend", () => {
+      conversationsListEl.classList.remove("drop-target");
+      conversationsListEl.querySelectorAll(".drop-target").forEach((element) => element.classList.remove("drop-target"));
+    });
+    let conversationSearchTimer = null;
+    document.querySelector("#conversationsSearch").addEventListener("input", (event) => {
+      conversationSearchTerm = event.target.value;
+      reapplyMessageHighlights();
+      clearTimeout(conversationSearchTimer);
+      conversationSearchTimer = setTimeout(renderConversationList, 200);
+    });
+    document.querySelectorAll("[data-language]").forEach((button) => button.addEventListener("click", () => setLanguage(button.dataset.language)));
+    setLanguage(language);
+    }
+  </script>
+</body>
+</html>
